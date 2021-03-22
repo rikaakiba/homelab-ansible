@@ -1,6 +1,9 @@
+- name: Set ansible_user if undefined
+  set_fact: ansible_user="{{ ansible_ssh_user | default(lookup('env', 'USER')) }}"
+  when: ansible_user is undefined
 - name: Get ansible_user home directory
   shell: |
-    getent passwd "{{ ansible_ssh_user | default(lookup('env', 'USER')) }}" | cut -d: -f6
+    getent passwd "{{ ansible_user }}" | cut -d: -f6
   register: ansible_home_result
   changed_when: False
 - name: Set the fact for the other scripts to use
