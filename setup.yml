@@ -1,6 +1,8 @@
 ---
 - hosts:
     - setup
+  vars:
+    yadm_decrypt_key: "{{ lookup('file', 'assets/yadm_decrypt_key') }}"
   become: true
   gather_facts: yes
   roles:

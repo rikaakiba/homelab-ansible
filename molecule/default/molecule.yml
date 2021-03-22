@@ -28,6 +28,5 @@ provisioner:
       setup:
         ansible_user: root
         redeploy_dotfiles: False
-        yadm_decrypt_key: "{{ lookup('file', 'assets/yadm_decrypt_key') }}"
 verifier:
   name: ansible
