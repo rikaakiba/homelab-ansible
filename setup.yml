@@ -28,7 +28,8 @@
     - role: geerlingguy.docker
       vars:
         docker_users:
-          - "{{ ansible_user }}"
+          # If host is localhost ansible_user could be undefined, provide a fallback here
+          - "{{ ansible_user | default(lookup('env', 'USER'), true)}}"
       tags: [docker]
   post_tasks:
     - name: Reboot System and wait unitl system up

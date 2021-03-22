@@ -88,8 +88,6 @@
     cmd: |
       gpg --batch --passphrase-fd 0 -d {{ user_home }}/.local/share/yadm/archive | tar vxf - -C {{ user_home }} --no-same-owner
     stdin: "{{ yadm_decrypt_key }}"
-  register: decrypt_result
   changed_when: False
   become: no
-
-- debug: var=decrypt_result
+  no_log: yes
