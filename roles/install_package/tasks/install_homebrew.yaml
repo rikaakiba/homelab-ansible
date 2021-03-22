@@ -1,17 +1,4 @@
 ---
-- name: Ensure homebrew installed
-  block:
-  - name: Check if brew command exists
-    shell: which brew
-    changed_when: False
-    failed_when: False
-    register: which_output
-
-  - include_role:
-      name: geerlingguy.homebrew
-    when: which_output.rc != 0
-    become: no
-
 - name: Upgrade homebrew packages
   community.general.homebrew:
     update_homebrew: >-
