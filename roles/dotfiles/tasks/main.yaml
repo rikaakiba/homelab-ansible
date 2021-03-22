@@ -14,6 +14,14 @@
     packages: "{{ yadm_dependencies }}"
     install_latest: yes
 
+- name: Install yadm debian-specific dependencies
+  include_role:
+    name: roles/install_package
+  vars:
+    packages: "{{ yadm_debian_dependencies }}"
+    install_latest: yes
+  when: ansible_os_family == 'Debian'
+
 - name: Install yadm
   block:
   - name: Install yadm via package manager
