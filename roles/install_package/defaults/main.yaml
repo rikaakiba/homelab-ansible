@@ -1,0 +1,7 @@
+# Variables for internal usage
+apt_cache_updated: no
+homebrew_updated: no
+upgrade: no
+
+install_latest: yes
+packages: []

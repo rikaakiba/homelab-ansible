@@ -1,0 +1,46 @@
+---
+- name: Install powerline
+  pip:
+    name:
+    - git+https://github.com/powerline/powerline.git@develop
+  become: no
+
+- name: Locate powerline repository root
+  shell: 'pip3 show powerline-status | grep Location | sed -E "s/^Location: (.+)$/\1/g"'
+  register: shell_result
+  changed_when: False
+  become: no
+
+- name: Remember powerline repository root
+  set_fact:
+    powerline_repo_root: "{{ shell_result.stdout }}"
+
+- debug: var=powerline_repo_root
+
+- block:
+  - name: Setup powerline for bash
+    lineinfile:
+      dest: "{{ user_home }}/.bashrc"
+      state: present
+      regexp: "{{ item.regexp }}"
+      line: "{{ item.line }}"
+    with_items:
+      - regexp: '^powerline-daemon -q'
+        line: 'powerline-daemon -q'
+      - regexp: '^POWERLINE_BASH_CONTINUATION'
+        line: 'POWERLINE_BASH_CONTINUATION=1'
+      - regexp: '^POWERLINE_BASH_SELECT'
+        line: 'POWERLINE_BASH_SELECT=1'
+      - regexp: '^\. .+\/powerline\/bindings\/bash\/powerline\.sh$'
+        line: '. {{ powerline_repo_root }}/powerline/bindings/bash/powerline.sh'
+
+  - name: Setup powerline for tmux
+    lineinfile:
+      dest: "~/.tmux.conf"
+      state: present
+      regexp: '{{ item.regexp }}'
+      line: '{{ item.line }}'
+    with_items:
+      - regexp: '^source "(?!{{ powerline_repo_root }}).*\/powerline\/bindings\/tmux\/powerline.conf"$'
+        line: 'source {{ powerline_repo_root }}/powerline/bindings/tmux/powerline.conf'
+  become: no

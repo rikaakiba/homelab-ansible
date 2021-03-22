@@ -1,0 +1,16 @@
+---
+- name: Ensure critical components installed
+  include_role:
+    name: roles/install_package
+  vars:
+    packages:
+    - git
+    - curl
+    install_latest: yes
+
+- name: Ensure critical python components installed
+  pip:
+    name:
+    - pexpect
+    state: latest
+  become: no

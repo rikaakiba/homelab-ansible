@@ -1,0 +1,34 @@
+---
+- hosts:
+    - setup
+  become: true
+  gather_facts: yes
+  roles:
+    - role: roles/facts
+      tags: [always]
+    - role: roles/sudoer
+      tags: [sudoer, initial]
+      when: ansible_user != "root"
+    - role: roles/package_manager
+      tags: [initial]
+    - role: roles/sshd
+      tags: [sshd, initial]
+    - role: roles/timezone
+      tags: [timezone, initial]
+    - role: roles/upgrade
+      tags: [upgrade, regular]
+    - role: roles/essential_packages
+      tags: [packages, regular]
+    - role: dotfiles
+      tags: [dotfiles, regular]
+    - role: roles/packages
+      tags: [packages, regular]
+    - role: geerlingguy.docker
+      vars:
+        docker_users:
+          - "{{ ansible_user }}"
+      tags: [docker]
+  post_tasks:
+    - name: Reboot System and wait unitl system up
+      reboot:
+      tags: [initial, molecule-notest]

@@ -1,0 +1,91 @@
+---
+- name: Install fish and related utilities
+  package:
+    state: latest
+    name:
+      - fish
+      - peco
+
+- name: Locate fish binary
+  block:
+  - shell: "which fish"
+    register: fish_executable
+    changed_when: False
+  - set_fact:
+      fish_executable: "{{ fish_executable.stdout }}"
+    changed_when: False
+
+- name: Make fish default shell
+  user:
+    name: "{{ current_user }}"
+    shell: "{{ fish_executable }}"
+  vars:
+    current_user: "{{ ansible_ssh_user }}"
+  become: yes
+
+- name: Ensure fisher installed
+  block:
+  - name: Check if fisher installed
+    shell:
+      cmd: "type fisher"
+      executable: "{{ fish_executable }}"
+    register: fisher_installed
+    changed_when: False
+    failed_when: False
+
+  - name: Install fisher
+    shell:
+      cmd: "curl -sL https://git.io/fisher | source && fisher update"
+      executable: "{{ fish_executable }}"
+      warn: no
+    register: fisher_command_result
+    when: fisher_installed.rc != 0
+
+  - name: Update fisher plugins
+    shell: fisher update
+    args:
+      executable: "{{ fish_executable }}"
+    register: fisher_command_result
+    changed_when: fisher_command_result.stdout | regex_search("Installed \d+")
+    when: fisher_installed.rc == 0
+
+  - debug: var=fisher_command_result
+  become: no
+
+- name: Ensure starship installed
+  block:
+  - include_role:
+      name: roles/install_package
+    vars:
+      packages: starship
+      install_latest: yes
+    when: ansible_os_family == 'Darwin'
+
+  - block:
+    - name: Check if starship installed
+      shell: type starship
+      register: starship_installed
+      changed_when: False
+      failed_when: False
+
+    - block:
+      - name: Download installer script
+        get_url:
+          url: https://starship.rs/install.sh
+          dest: "{{ user_home }}/install_starship.sh"
+          mode: "0777"
+
+      - name: Run starship installer
+        shell:
+          cmd: "./install_starship.sh -y"
+          chdir: "{{ user_home }}"
+        become: yes
+
+      - name: Cleanup
+        file:
+          path: "{{ user_home }}/install_starship.sh"
+          state: absent
+
+      when: starship_installed.rc != 0
+    when: ansible_os_family != 'Darwin'
+  become: no

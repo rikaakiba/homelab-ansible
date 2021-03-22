@@ -1,0 +1,10 @@
+---
+# The name of ssh daemon
+sshd: ssh
+
+# The name of ssh server package
+ssh_server_package: openssh-server
+
+# Where is ssh config is located at
+sshd_config: /etc/ssh/sshd_config
+sshd_config_backup: /etc/ssh/sshd_config.backup

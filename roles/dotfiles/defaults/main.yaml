@@ -1,0 +1,11 @@
+---
+delete_repository: true
+redeploy_dotfiles: true
+
+dotfiles_repository: https://github.com/rikaakiba/dotfiles.git
+yadm_package_name: unset
+yadm_dependencies:
+- curl
+- git
+- gpg
+- gpg-agent

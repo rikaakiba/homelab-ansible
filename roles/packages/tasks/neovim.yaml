@@ -1,0 +1,41 @@
+---
+- name: Install neovim
+  package:
+    state: latest
+    name:
+      - neovim
+  become: "yes"
+
+- name: Install neovim python dependency
+  pip:
+    name:
+      - pynvim
+      - msgpack
+  become: "no"
+
+- name: Check if dein.vim installed
+  stat:
+    path: "{{ user_home }}/.cache/dein"
+  register: dein_path
+  changed_when: False
+
+- name: Setup dein.vim
+  block:
+    - name: Download script
+      get_url:
+        url: https://raw.githubusercontent.com/Shougo/dein.vim/master/bin/installer.sh
+        dest: "{{ user_home }}/installer.sh"
+
+    - name: Run installer
+      shell:
+        cmd: "{{ item }}"
+      with_items:
+        - "sh {{ user_home }}/installer.sh {{ user_home }}/.cache/dein"
+
+    - name: Cleanup
+      file:
+        path: "{{ user_home }}/installer.sh"
+        state: absent
+
+  become: "no"
+  when: dein_path.stat.exists == False

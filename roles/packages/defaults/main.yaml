@@ -1,0 +1,20 @@
+---
+qemu_guest: no
+install_neovim: yes
+install_powerline: yes
+
+basic_packages:
+- whois
+- sshpass
+- jq
+- git
+- curl
+- wget
+- tmux
+- htop
+
+debian_packages:
+- net-tools
+- python3-pip
+- tzdata
+- nfs-common

@@ -1,0 +1,5 @@
+.cache
+inventory
+!inventory/.gitkeep
+assets
+!assets/id_rsa.pub

@@ -1,0 +1,12 @@
+---
+- hosts:
+    - all
+  become: true
+  gather_facts: yes
+  roles:
+    - role: roles/facts
+      tags: [always]
+    - role: roles/essential_packages
+    - role: roles/upgrade
+    - role: roles/dotfiles
+    - role: roles/packages

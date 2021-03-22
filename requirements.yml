@@ -1,0 +1,5 @@
+roles:
+  - geerlingguy.docker
+  - geerlingguy.homebrew
+collections:
+  - community.general

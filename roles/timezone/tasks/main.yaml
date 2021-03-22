@@ -1,0 +1,15 @@
+---
+- block:
+  - name: Ensure tzdata installed
+    include_role:
+      name: install_package
+    vars:
+      packages:
+      - tzdata
+      install_latest: yes
+
+  - name: Set timezone to Asia/Tokyo
+    timezone:
+      name: Asia/Tokyo
+
+  become: "yes"

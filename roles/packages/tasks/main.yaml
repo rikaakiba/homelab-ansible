@@ -1,0 +1,33 @@
+---
+- name: Install components
+  block:
+    - name: Install components
+      include_role:
+        name: roles/install_package
+      vars:
+        packages: "{{ basic_packages }}"
+        install_latest: yes
+
+    - name: Install debian-specific packages
+      include_role:
+        name: roles/install_package
+      vars:
+        packages: "{{ debian_packages }}"
+        install_latest: yes
+      when: ansible_os_family == 'Debian'
+
+    - name: Install components for VM
+      apt:
+        name:
+        - qemu-guest-agent
+      when: ansible_os_family == 'Debian' and qemu_guest
+
+    - import_tasks: fish.yaml
+
+    - import_tasks: neovim.yaml
+      when: install_neovim
+      tags: [optional_packages]
+
+    - import_tasks: powerline.yaml
+      when: install_powerline
+      tags: [optional_packages]

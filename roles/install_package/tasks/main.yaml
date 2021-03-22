@@ -1,0 +1,6 @@
+---
+- include_tasks: ./install_apt.yaml
+  when: ansible_os_family == 'Debian'
+
+- include_tasks: ./install_homebrew.yaml
+  when: ansible_os_family == 'Darwin'

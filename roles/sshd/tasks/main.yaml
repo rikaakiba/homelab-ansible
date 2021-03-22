@@ -1,0 +1,46 @@
+---
+- block:
+  - name: Ensure ssh server installed
+    include_role:
+      name: roles/install_package
+    vars:
+      packages:
+      - "{{ ssh_server_package }}"
+      install_latest: yes
+    when: ansible_os_family != 'Darwin'
+
+  - name: Copy authorized key
+    authorized_key:
+      user: "{{ ansible_ssh_user }}"
+      key: "{{ lookup('file', 'assets/id_rsa.pub') }}"
+    register: add_identity_key
+
+  - name: Backup sshd_config
+    copy:
+      remote_src: yes
+      src: "{{ sshd_config }}"
+      dest: "{{ sshd_config_backup }}"
+      force: no
+
+  - name: Modify sshd_config
+    lineinfile:
+      dest: "{{ sshd_config }}"
+      state: present
+      regexp: '{{ item.regexp }}'
+      line: '{{ item.line }}'
+    with_items:
+      - regexp: '^#?PermitEmptyPasswords'
+        line: 'PermitEmptyPasswords no'
+      - regexp: '^#?PermitRootLogin'
+        line: 'PermitRootLogin no'
+    notify: restart sshd
+
+  - name: Check sshd_config changed
+    command: diff {{ sshd_config_backup }} {{ sshd_config }}
+    register: sshd_config_diff
+    changed_when: False
+    failed_when: "sshd_config_diff.rc > 1"
+
+  - debug: var=sshd_config_diff.stdout_lines
+
+  become: "yes"

@@ -1,0 +1,7 @@
+- name: Get ansible_user home directory
+  shell: 'getent passwd "{{ ansible_ssh_user }}" | cut -d: -f6'
+  register: ansible_home_result
+  changed_when: False
+- name: Set the fact for the other scripts to use
+  set_fact: user_home='{{ ansible_home_result.stdout }}'
+- debug: var=user_home

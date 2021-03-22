@@ -1,0 +1,7 @@
+---
+- name: Upgrade existings packages
+  include_role:
+    name: roles/install_package
+  vars:
+    upgrade: yes
+    install_latest: yes

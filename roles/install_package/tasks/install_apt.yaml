@@ -1,0 +1,26 @@
+---
+- name: Upgrade apt packages
+  apt:
+    update_cache: >-
+      {%- if not apt_cache_updated -%} yes
+      {%- else -%} no
+      {%- endif -%}
+    upgrade: 'yes'
+  when: upgrade is defined and upgrade
+
+- name: Install package(s) via apt
+  apt:
+    name: "{{ packages | default([]) }}"
+    state: >-
+      {%- if install_latest -%} latest
+      {%- else -%} present
+      {%- endif -%}
+    update_cache: >-
+      {%- if not apt_cache_updated and not upgrade -%} yes
+      {%- else -%} no
+      {%- endif -%}
+
+- name: Remember cache state
+  set_fact:
+    apt_cache_updated: yes
+  when: not apt_cache_updated

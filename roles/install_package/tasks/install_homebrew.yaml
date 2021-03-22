@@ -1,0 +1,39 @@
+---
+- name: Ensure homebrew installed
+  block:
+  - name: Check if brew command exists
+    shell: which brew
+    changed_when: False
+    failed_when: False
+    register: which_output
+
+  - include_role:
+      name: geerlingguy.homebrew
+    when: which_output.rc != 0
+
+- name: Upgrade homebrew packages
+  community.general.homebrew:
+    update_homebrew: >-
+      {%- if not homebrew_updated -%} yes
+      {%- else -%} no
+      {%- endif -%}
+    upgrade_all: yes
+  when: upgrade == True
+
+- name: Install homebrew packages
+  community.general.homebrew:
+    name: "{{ item }}"
+    state: >-
+      {%- if install_latest -%} latest
+      {%- else -%} present
+      {%- endif -%}
+    update_homebrew: >-
+      {%- if not homebrew_updated and not upgrade -%} yes
+      {%- else -%} no
+      {%- endif -%}
+  with_items: "{{ packages }}"
+
+- name: Remember homebrew state
+  set_fact:
+    homebrew_updated: yes
+  when: not homebrew_updated
