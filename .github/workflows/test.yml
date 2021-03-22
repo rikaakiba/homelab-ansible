@@ -44,4 +44,4 @@ jobs:
     
     - name: Run playbook
       run: |
-        ansible-playbook -i .github/inventory.ini setup.yml
+        ansible-playbook --vault-password-file assets/vault_password -i .github/inventory.ini setup.yml
