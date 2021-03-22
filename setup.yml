@@ -27,7 +27,7 @@
       tags: [packages, regular]
     - role: geerlingguy.docker
       vars:
-        ansible_user: "{{ ansible_user }}"
+        ansible_user: "{{ ansible_env.USER }}"
         docker_users:
           - "{{ ansible_user }}"
       tags: [docker]
