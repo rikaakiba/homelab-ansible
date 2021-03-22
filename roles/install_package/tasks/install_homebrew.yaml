@@ -10,6 +10,7 @@
   - include_role:
       name: geerlingguy.homebrew
     when: which_output.rc != 0
+    become: no
 
 - name: Upgrade homebrew packages
   community.general.homebrew:
@@ -19,10 +20,11 @@
       {%- endif -%}
     upgrade_all: yes
   when: upgrade == True
+  become: no
 
 - name: Install homebrew packages
   community.general.homebrew:
-    name: "{{ item }}"
+    name: "{{ packages }}"
     state: >-
       {%- if install_latest -%} latest
       {%- else -%} present
@@ -31,9 +33,10 @@
       {%- if not homebrew_updated and not upgrade -%} yes
       {%- else -%} no
       {%- endif -%}
-  with_items: "{{ packages }}"
+  become: no
 
 - name: Remember homebrew state
   set_fact:
     homebrew_updated: yes
   when: not homebrew_updated
+  become: no
