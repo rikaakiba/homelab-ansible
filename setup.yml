@@ -34,4 +34,5 @@
   post_tasks:
     - name: Reboot System and wait unitl system up
       reboot:
+      failed_when: False
       tags: [initial, molecule-notest]
