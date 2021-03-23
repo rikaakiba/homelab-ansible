@@ -27,7 +27,8 @@
 - debug: var=user_home
 
 - name: Check if running under CI environment
-  stat: "{{ user_home }}/.ci"
+  stat:
+    path: "{{ user_home }}/.ci"
   register: ci_stat
   changed_when: False
 
