@@ -34,4 +34,4 @@
 
 - name: Remember CI environment
   set_fact:
-    running_in_ci: "{{ ci_stat.exists }}"
+    running_in_ci: "{{ ci_stat.stat.exists }}"
