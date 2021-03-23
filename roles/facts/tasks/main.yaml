@@ -7,13 +7,12 @@
     shell: |
       getent passwd "{{ ansible_user }}" | cut -d: -f6
     when: ansible_os_family != 'Darwin'
-    register: ansible_home_result
     changed_when: False
   - name: get home directory on macOS
     shell: echo $HOME
     when: ansible_os_family == 'Darwin'
-    register: ansible_home_result
     changed_when: False
+  register: ansible_home_result
 - name: Set the fact for the other scripts to use
   set_fact: user_home='{{ ansible_home_result.stdout }}'
 - debug: var=user_home
