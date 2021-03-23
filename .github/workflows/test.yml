@@ -12,6 +12,11 @@ jobs:
         # See: https://docs.github.com/ja/actions/reference/workflow-syntax-for-github-actions#:~:text=The%20macOS%2011.0%20virtual%20environment%20is%20currently%20provided%20as%20a%20private%20preview%20only
         os: [ubuntu-latest, macos-10.15]
         python-version: [3.8]
+        include:
+        - os: ubuntu-latest
+          path: ~/.cache/pip
+        - os: macos-10.15
+          path: ~/Library/Caches/pip
 
     name: Test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -27,6 +32,13 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+
+    - uses: actions/cache@v2
+      with:
+        path: ${{ matrix.path }}
+        key: ${{ runner.os }}-ansible-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+         ${{ runner.os }}-ansible-pip-
 
     - name: Install Ansible
       if: contains(matrix.os, 'macos')
