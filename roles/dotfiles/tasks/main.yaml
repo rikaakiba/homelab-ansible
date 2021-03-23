@@ -98,4 +98,4 @@
     stdin: "{{ yadm_decrypt_key }}"
   changed_when: False
   become: no
-  # no_log: yes
+  no_log: yes

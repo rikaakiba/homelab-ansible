@@ -44,4 +44,6 @@ jobs:
     
     - name: Run playbook
       run: |
-        CI='Github Actions' ansible-playbook --vault-password-file assets/vault_password -i .github/inventory.ini setup.yml
+        ansible-playbook --vault-password-file assets/vault_password -i .github/inventory.ini setup.yml
+      env:
+        CI: Github Actions
