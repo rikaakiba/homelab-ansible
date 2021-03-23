@@ -1,7 +1,39 @@
-- name: Get ansible_user home directory
-  shell: 'getent passwd "{{ ansible_ssh_user }}" | cut -d: -f6'
-  register: ansible_home_result
-  changed_when: False
-- name: Set the fact for the other scripts to use
-  set_fact: user_home='{{ ansible_home_result.stdout }}'
+- name: Set ansible_user if undefined
+  set_fact: ansible_user="{{ ansible_ssh_user | default(ansible_env.USER, true) }}"
+  when: ansible_user is undefined
+
+- name: Get ansible_user home directory on Linux
+  block:
+  - shell: |
+      getent passwd "{{ ansible_user }}" | cut -d: -f6
+    changed_when: False
+    register: ansible_home_result
+  - name: Set the fact for the other scripts to use
+    set_fact: user_home='{{ ansible_home_result.stdout }}'
+  when: ansible_os_family != 'Darwin'
+  become: no
+
+- name: Get ansible_user home directory on MacOS
+  block:
+  - name: get home directory on macOS
+    shell: echo $HOME
+    changed_when: False
+    register: ansible_home_result
+  - name: Set the fact for the other scripts to use
+    set_fact: user_home='{{ ansible_home_result.stdout }}'
+  when: ansible_os_family == 'Darwin'
+  become: no
+
 - debug: var=user_home
+
+- name: Check if running under CI environment
+  stat:
+    path: "{{ user_home }}/.ci"
+  register: ci_stat
+  changed_when: False
+
+- name: Remember CI environment
+  set_fact:
+    running_in_ci: "{{ ci_stat.stat.exists }}"
+
+- debug: var=running_in_ci

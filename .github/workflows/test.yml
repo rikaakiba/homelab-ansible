@@ -1,0 +1,60 @@
+name: Test Ansible Playbooks
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        # macos-11.0 is currently unavailable
+        # See: https://docs.github.com/ja/actions/reference/workflow-syntax-for-github-actions#:~:text=The%20macOS%2011.0%20virtual%20environment%20is%20currently%20provided%20as%20a%20private%20preview%20only
+        os: [ubuntu-latest, macos-10.15]
+        python-version: [3.8]
+        include:
+        - os: ubuntu-latest
+          path: ~/.cache/pip
+        - os: macos-10.15
+          path: ~/Library/Caches/pip
+
+    name: Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    env:
+      ANSIBLE_VAULT_PASS: ${{ secrets.ANSIBLE_VAULT_PASS }}
+      YADM_DECRYPT_KEY: ${{ secrets.YADM_DECRYPT_KEY }}
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      if: contains(matrix.os, 'macos')
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - uses: actions/cache@v2
+      with:
+        path: ${{ matrix.path }}
+        key: ${{ runner.os }}-ansible-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+         ${{ runner.os }}-ansible-pip-
+
+    - name: Install Ansible
+      if: contains(matrix.os, 'macos')
+      run: pip install -r requirements.txt
+
+    - name: Install dependency
+      run: |
+        ansible-galaxy role install -r requirements.yml
+        ansible-galaxy collection install -r requirements.yml
+    
+    - name: Prepare environment
+      run: |
+        echo $ANSIBLE_VAULT_PASS > assets/vault_password
+        echo $YADM_DECRYPT_KEY > assets/yadm_decrypt_key
+        echo "GitHub Actions" > ~/.ci
+    
+    - name: Run playbook
+      run: |
+        ansible-playbook --vault-password-file assets/vault_password -i .github/inventory.ini setup.yml

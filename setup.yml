@@ -1,8 +1,10 @@
 ---
 - hosts:
     - setup
-  become: true
+  vars:
+    yadm_decrypt_key: "{{ lookup('file', 'assets/yadm_decrypt_key') }}"
   gather_facts: yes
+  become: yes
   roles:
     - role: roles/facts
       tags: [always]
@@ -26,9 +28,12 @@
     - role: geerlingguy.docker
       vars:
         docker_users:
-          - "{{ ansible_user }}"
+          # If host is localhost ansible_user could be undefined, provide a fallback here
+          - "{{ ansible_user | default(lookup('env', 'USER'), true)}}"
+      when: ansible_os_family != 'Darwin'
       tags: [docker]
   post_tasks:
     - name: Reboot System and wait unitl system up
       reboot:
+      failed_when: False
       tags: [initial, molecule-notest]

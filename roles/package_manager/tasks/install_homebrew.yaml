@@ -6,6 +6,7 @@
     changed_when: False
     failed_when: False
     register: which_output
+    become: no
 
   - include_role:
       name: geerlingguy.homebrew

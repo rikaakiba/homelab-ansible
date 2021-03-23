@@ -7,6 +7,7 @@
       vars:
         packages: "{{ basic_packages }}"
         install_latest: yes
+      when: ansible_os_family != 'Darwin'
 
     - name: Install debian-specific packages
       include_role:
@@ -15,6 +16,14 @@
         packages: "{{ debian_packages }}"
         install_latest: yes
       when: ansible_os_family == 'Debian'
+
+    - name: Install from Brewfile
+      shell: |
+        brew bundle --global
+      args:
+        chdir: "{{ user_home }}"
+      become: no
+      when: ansible_os_family == 'Darwin' and not running_in_ci
 
     - name: Install components for VM
       apt:

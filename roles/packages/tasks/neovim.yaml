@@ -4,14 +4,17 @@
     state: latest
     name:
       - neovim
-  become: "yes"
+  become: >
+    {%- if ansible_os_family == 'Darwin' -%} no
+    {%- else -%} yes
+    {%- endif -%}
 
 - name: Install neovim python dependency
   pip:
     name:
       - pynvim
       - msgpack
-  become: "no"
+  become: no
 
 - name: Check if dein.vim installed
   stat:
@@ -37,5 +40,5 @@
         path: "{{ user_home }}/installer.sh"
         state: absent
 
-  become: "no"
+  become: no
   when: dein_path.stat.exists == False

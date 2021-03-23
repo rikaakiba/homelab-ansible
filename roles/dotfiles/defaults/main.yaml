@@ -8,4 +8,5 @@ yadm_dependencies:
 - curl
 - git
 - gpg
+yadm_debian_dependencies:
 - gpg-agent

@@ -5,6 +5,10 @@
     name:
       - fish
       - peco
+  become: >
+    {%- if ansible_os_family == 'Darwin' -%} no
+    {%- else -%} yes
+    {%- endif -%}
 
 - name: Locate fish binary
   block:
@@ -20,7 +24,7 @@
     name: "{{ current_user }}"
     shell: "{{ fish_executable }}"
   vars:
-    current_user: "{{ ansible_ssh_user }}"
+    current_user: "{{ ansible_user }}"
   become: yes
 
 - name: Ensure fisher installed
