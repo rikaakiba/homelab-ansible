@@ -3,7 +3,6 @@
     - setup
   vars:
     yadm_decrypt_key: "{{ lookup('file', 'assets/yadm_decrypt_key') }}"
-  become: true
   gather_facts: yes
   roles:
     - role: roles/facts
@@ -30,6 +29,7 @@
         docker_users:
           # If host is localhost ansible_user could be undefined, provide a fallback here
           - "{{ ansible_user | default(lookup('env', 'USER'), true)}}"
+      when: ansible_os_family != 'Darwin'
       tags: [docker]
   post_tasks:
     - name: Reboot System and wait unitl system up
