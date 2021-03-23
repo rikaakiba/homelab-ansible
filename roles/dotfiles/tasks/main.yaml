@@ -71,7 +71,8 @@
     register: dotfiles_repository_exists
     changed_when: False
     failed_when: False
-  - debug: var=dotfiles_repository_exists
+  - debug: 
+      msg: "Dotfiles repository {%- if dotfiles_repository_exists.rc == 0 -%}exists.{%- else -%}does not exist.{%- endif -%}"
 
   - name: Clone dotfiles
     shell:
