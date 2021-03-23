@@ -41,8 +41,7 @@ jobs:
       run: |
         echo $ANSIBLE_VAULT_PASS > assets/vault_password
         echo $YADM_DECRYPT_KEY > assets/yadm_decrypt_key
-        export CI='Github Actions'
     
     - name: Run playbook
       run: |
-        ansible-playbook --vault-password-file assets/vault_password -i .github/inventory.ini setup.yml
+        CI='Github Actions' ansible-playbook --vault-password-file assets/vault_password -i .github/inventory.ini setup.yml
