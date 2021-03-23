@@ -17,6 +17,9 @@
         install_latest: yes
       when: ansible_os_family == 'Debian'
 
+    - debug: var=ansible_env.CI
+      when: ansible_os_family == 'Darwin'
+
     - name: Install from Brewfile
       shell: |
         brew bundle --global
