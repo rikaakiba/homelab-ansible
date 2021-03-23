@@ -26,7 +26,7 @@
       args:
         chdir: "{{ user_home }}"
       become: no
-      when: ansible_os_family == 'Darwin' and (ansible_env.CI is undefined or ansible_env.CI == "")
+      when: ansible_os_family == 'Darwin' and running_in_ci
 
     - name: Install components for VM
       apt:
