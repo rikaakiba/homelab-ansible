@@ -37,10 +37,11 @@ jobs:
         ansible-galaxy role install -r requirements.yml
         ansible-galaxy collection install -r requirements.yml
     
-    - name: Prepare secrets
+    - name: Prepare environment
       run: |
         echo $ANSIBLE_VAULT_PASS > assets/vault_password
         echo $YADM_DECRYPT_KEY > assets/yadm_decrypt_key
+        export CI='Github Actions'
     
     - name: Run playbook
       run: |
