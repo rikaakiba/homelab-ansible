@@ -4,6 +4,7 @@
   vars:
     yadm_decrypt_key: "{{ lookup('file', 'assets/yadm_decrypt_key') }}"
   gather_facts: yes
+  become: yes
   roles:
     - role: roles/facts
       tags: [always]
