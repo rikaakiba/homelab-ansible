@@ -7,7 +7,7 @@
       vars:
         packages: "{{ basic_packages }}"
         install_latest: yes
-      when: ansible_ox_family != 'Darwin'
+      when: ansible_os_family != 'Darwin'
 
     - name: Install debian-specific packages
       include_role:
