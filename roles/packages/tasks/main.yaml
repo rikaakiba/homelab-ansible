@@ -22,7 +22,8 @@
         brew bundle --global
       args:
         chdir: "{{ user_home }}"
-      when: ansible_os_family == 'Darwin' and ansible_env.CI is undefined
+      become: no
+      when: ansible_os_family == 'Darwin' and (ansible_env.CI is undefined or ansible_env.CI == "")
 
     - name: Install components for VM
       apt:
