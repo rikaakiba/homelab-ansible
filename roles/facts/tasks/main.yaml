@@ -2,10 +2,18 @@
   set_fact: ansible_user="{{ ansible_ssh_user | default(ansible_env.USER, true) }}"
   when: ansible_user is undefined
 - name: Get ansible_user home directory
-  shell: |
-    getent passwd "{{ ansible_user }}" | cut -d: -f6
-  register: ansible_home_result
-  changed_when: False
+  block:
+  - name: get home directory on Linux
+    shell: |
+      getent passwd "{{ ansible_user }}" | cut -d: -f6
+    when: ansible_os_family != 'Darwin'
+    register: ansible_home_result
+    changed_when: False
+  - name: get home directory on macOS
+    shell: echo $HOME
+    when: ansible_os_family == 'Darwin'
+    register: ansible_home_result
+    changed_when: False
 - name: Set the fact for the other scripts to use
   set_fact: user_home='{{ ansible_home_result.stdout }}'
 - debug: var=user_home
