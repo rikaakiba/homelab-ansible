@@ -5,8 +5,6 @@
     yadm_decrypt_key: "{{ lookup('file', 'assets/yadm_decrypt_key') }}"
   gather_facts: yes
   become: yes
-  pre_tasks:
-    - debug: var=ansible_env
   roles:
     - role: roles/facts
       tags: [always]
