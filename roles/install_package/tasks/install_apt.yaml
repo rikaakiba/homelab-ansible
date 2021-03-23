@@ -6,7 +6,7 @@
       {%- else -%} no
       {%- endif -%}
     upgrade: 'yes'
-    become: yes
+  become: yes
   when: upgrade is defined and upgrade
 
 - name: Install package(s) via apt
@@ -20,7 +20,7 @@
       {%- if not apt_cache_updated and not upgrade -%} yes
       {%- else -%} no
       {%- endif -%}
-    become: yes
+  become: yes
 
 - name: Remember cache state
   set_fact:
