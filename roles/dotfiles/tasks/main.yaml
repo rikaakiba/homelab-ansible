@@ -52,7 +52,7 @@
         mkdir -p {{ user_home }}/.local/bin
         ln -sfnv {{ user_home }}/.yadm-project/yadm {{ user_home }}/.local/bin/yadm
         echo {{ user_home }}/.yadm-project/yadm
-      when: yadm_repository.stat.exists == False
+      when: not yadm_repository.stat.exists
 
     - name: Locate yadm executable
       set_fact:
