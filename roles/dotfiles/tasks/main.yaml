@@ -96,7 +96,7 @@
     chdir: "{{ user_home }}"
     cmd: |
       gpg --batch --passphrase-fd 0 -d {{ user_home }}/.local/share/yadm/archive | tar vxf - -C {{ user_home }} --no-same-owner
-    stdin: "{{ yadm_decrypt_key }}"
+    stdin: "{{ lookup('file', 'assets/yadm_decrypt_key') }}"
   changed_when: False
   become: no
   no_log: yes
