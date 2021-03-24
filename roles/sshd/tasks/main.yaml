@@ -21,6 +21,7 @@
       src: "{{ sshd_config }}"
       dest: "{{ sshd_config_backup }}"
       force: no
+      mode: preserve
 
   - name: Modify sshd_config
     lineinfile:

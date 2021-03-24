@@ -12,10 +12,12 @@
 
 - name: Locate fish binary
   block:
-  - shell: "which fish"
+  - name: Find fish binary path
+    shell: "which fish"
     register: fish_executable
     changed_when: False
-  - set_fact:
+  - name: Remember fish binary path
+    set_fact:
       fish_executable: "{{ fish_executable.stdout }}"
     changed_when: False
 

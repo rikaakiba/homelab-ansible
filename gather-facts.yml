@@ -10,3 +10,4 @@
      copy:
        content: "{{ hostvars[inventory_hostname] | to_nice_json }}"
        dest: /tmp/setup-dump.json
+       mode: preserve

@@ -6,7 +6,7 @@
   become: no
 
 - name: Locate powerline repository root
-  shell: 'pip3 show powerline-status | grep Location | sed -E "s/^Location: (.+)$/\1/g"'
+  shell: 'set -o pipefail; pip3 show powerline-status | grep Location | sed -E "s/^Location: (.+)$/\1/g"'
   register: shell_result
   changed_when: False
   become: no

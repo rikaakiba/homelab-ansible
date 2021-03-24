@@ -6,7 +6,7 @@
       {%- else -%} no
       {%- endif -%}
     upgrade_all: yes
-  when: upgrade == True
+  when: upgrade
   become: no
 
 - name: Install homebrew packages
