@@ -1,0 +1,32 @@
+name: Ansible Lint  # feel free to pick your own name
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9]
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-ansible-lint-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+         ${{ runner.os }}-ansible-lint-pip-
+
+    - name: Install Ansible
+      run: pip install -r requirements.txt
+
+    - name: Run ansible-lint
+      run: |
+        ansible-lint

@@ -12,10 +12,12 @@
 
 - name: Locate fish binary
   block:
-  - shell: "which fish"
+  - name: Find fish binary path
+    shell: "which fish"
     register: fish_executable
     changed_when: False
-  - set_fact:
+  - name: Remember fish binary path
+    set_fact:
       fish_executable: "{{ fish_executable.stdout }}"
     changed_when: False
 
@@ -53,12 +55,14 @@
     changed_when: fisher_command_result.stdout | regex_search("Installed \d+")
     when: fisher_installed.rc == 0
 
-  - debug: var=fisher_command_result
+  - name: Show fisher_command_result
+    debug: var=fisher_command_result
   become: no
 
 - name: Ensure starship installed
   block:
-  - include_role:
+  - name: Install starship via package manager
+    include_role:
       name: roles/install_package
     vars:
       packages: starship

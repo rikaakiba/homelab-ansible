@@ -4,7 +4,8 @@
 
 - name: Get ansible_user home directory on Linux
   block:
-  - shell: |
+  - name: Get user home
+    shell: |
       getent passwd "{{ ansible_user }}" | cut -d: -f6
     changed_when: False
     register: ansible_home_result
@@ -24,7 +25,8 @@
   when: ansible_os_family == 'Darwin'
   become: no
 
-- debug: var=user_home
+- name: Show value of user_home
+  debug: var=user_home
 
 - name: Check if running under CI environment
   stat:
@@ -36,4 +38,5 @@
   set_fact:
     running_in_ci: "{{ ci_stat.stat.exists }}"
 
-- debug: var=running_in_ci
+- name: Show value of running_in_ci
+  debug: var=running_in_ci

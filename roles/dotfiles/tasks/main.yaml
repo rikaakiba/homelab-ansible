@@ -52,7 +52,7 @@
         mkdir -p {{ user_home }}/.local/bin
         ln -sfnv {{ user_home }}/.yadm-project/yadm {{ user_home }}/.local/bin/yadm
         echo {{ user_home }}/.yadm-project/yadm
-      when: yadm_repository.stat.exists == False
+      when: not yadm_repository.stat.exists
 
     - name: Locate yadm executable
       set_fact:
@@ -61,7 +61,8 @@
     when: ansible_os_family == 'Debian'
     become: no
 
-- debug: var=yadm_executable
+- name: Show yadm executable path
+  debug: var=yadm_executable
 
 - name: Ensure dotfiles deployed
   block:
@@ -71,7 +72,8 @@
     register: dotfiles_repository_exists
     changed_when: False
     failed_when: False
-  - debug: 
+  - name: Show if dotfiles repository exists
+    debug: 
       msg: "Dotfiles repository {%- if dotfiles_repository_exists.rc == 0 -%}exists.{%- else -%}does not exist.{%- endif -%}"
 
   - name: Clone dotfiles
