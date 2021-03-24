@@ -8,6 +8,7 @@
     register: which_output
     become: no
 
-  - include_role:
+  - name: Install homebrew
+    include_role:
       name: geerlingguy.homebrew
     when: which_output.rc != 0

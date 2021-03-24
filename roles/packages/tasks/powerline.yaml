@@ -17,7 +17,8 @@
   set_fact:
     powerline_repo_root: "{{ shell_result.stdout }}"
 
-- debug: var=powerline_repo_root
+- name: Show powerline repository root
+  debug: var=powerline_repo_root
 
 - block:
   - name: Setup powerline for bash
