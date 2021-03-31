@@ -73,8 +73,8 @@
     changed_when: False
     failed_when: False
   - name: Show if dotfiles repository exists
-    debug: 
-      msg: "Dotfiles repository {%- if dotfiles_repository_exists.rc == 0 -%}exists.{%- else -%}does not exist.{%- endif -%}"
+    debug:
+      msg: "Dotfiles repository {% if dotfiles_repository_exists.rc == 0 -%}exists.{%- else -%}does not exist.{%- endif -%}"
 
   - name: Clone dotfiles
     shell:
@@ -99,6 +99,14 @@
     cmd: |
       gpg --batch --passphrase-fd 0 -d {{ user_home }}/.local/share/yadm/archive | tar vxf - -C {{ user_home }} --no-same-owner
     stdin: "{{ lookup('file', 'assets/yadm_decrypt_key') }}"
+  when: remote is undefined or not remote
   changed_when: False
   become: no
   no_log: yes
+
+- name: Symlink alternative files/templates
+  shell:
+    cmd: "{{ yadm_executable }} alt"
+    chdir: "{{ user_home }}"
+  changed_when: False
+  become: no
