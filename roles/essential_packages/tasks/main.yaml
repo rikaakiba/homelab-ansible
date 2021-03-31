@@ -1,4 +1,9 @@
 ---
+- name: Include debian essential packages
+  set_fact:
+    essential_packages: "{{ essential_packages + debian_essential_packages }}"
+  when: ansible_os_family == 'Debian'
+
 - name: Ensure critical components installed
   include_role:
     name: roles/install_package
